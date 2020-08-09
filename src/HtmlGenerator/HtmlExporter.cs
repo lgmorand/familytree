@@ -12,8 +12,9 @@ namespace HtmlGenerator
         {
             var firstAncestor = GetPerson(ppl, ancestorId);
             StreamWriter strW = new StreamWriter(path);
-            strW.Write("<meta charset='UTF-8'> ");
-            strW.Write(@"<style type='text/css'>
+            strW.Write("<html><meta charset='UTF-8'> ");
+			strW.Write("<script type='text/javascript' src='https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.min.js'></script>'");
+			strW.Write(@"<style type='text/css'>
 .tree * {margin: 0; padding: 0;}
 
 .tree{
@@ -165,6 +166,10 @@ right connector from last child*/
 
   /* cg - remove focus rectangle */
   outline:none;
+
+box-shadow: 3px 6px 5px 0px rgba(186,186,186,1);
+   -webkit-box-shadow: 3px 6px 5px 0px rgba(186,186,186,1);
+   -moz-box-shadow: 3px 6px 5px 0px rgba(186,186,186,1);
 }
 
 .tree li a#hilight{
@@ -194,8 +199,6 @@ right connector from last child*/
 .tree li a+.p1 a.m { background: #c8e4fb; color: #000; border: 1px solid #94a0b4; }
 .tree li a+.p1 a.f { background: #ffc0cb; color: #000; border: 1px solid #94a0b4; }
 
-/*Thats all. I hope you enjoyed it.
-Thanks :)*/
 
 .tree .tree-thumbnail
 {
@@ -246,40 +249,17 @@ Thanks :)*/
 	-moz-transition: all 0.5s;
 }
 
-.tree .li a span{
-	display:block;
-	font-size: 10px;
-	}
-
-.tree .li a{
-	border: 1px solid #ccc;
-	padding: 4px;
-	text-decoration: none;
-	color: #666;
-	background-color:#fff;
-	display: inline-block;
-	min-width:50px;
-
-	border-radius: 5px;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-
-	transition: all 0.5s;
-	-webkit-transition: all 0.5s;
-	-moz-transition: all 0.5s;
-}
 
 /* cg: make sure the popovers are higher than the hovers */
 .popover { z-index: 4444; }
 
-.icon-info-sign {
-    background-position: 0px 0px;
-	background-image:url('../images/icon-info-sign.png');
-}
+
 </style>");
             strW.Write("<div class='tree'><ul>");
             ExportUser(firstAncestor, strW);
             strW.Write("</ul></div>");
+			strW.Write(@"<script type='text/javascript'>$(document).ready(function(){ document.getElementById('"+ ancestorId+"').scrollIntoView({ inline: 'center' });});</script>");
+			strW.Write("</html>");
             strW.Flush();
             strW.Close();
         }
@@ -296,7 +276,7 @@ Thanks :)*/
 
         private void ExportUser(Person p, StreamWriter strW)
         {
-            strW.Write(string.Format("<li><a class='{0}'><div class='tree-thumbnail'></div><div class='tree-detail'>{1}<span>{2}</span></div></a>", p.Gender == Gender.Female ? "f" : "m", p.Name, GetCleanYear(p.YearOfBirth, p.YearOfDeath)));
+            strW.Write(string.Format("<li><a class='{0}' id='{3}'><div class='tree-thumbnail'></div><div class='tree-detail'>{1}<span>{2}</span></div></a>", p.Gender == Gender.Female ? "f" : "m", p.Name, GetCleanYear(p.YearOfBirth, p.YearOfDeath), p.Id));
 
             if (!persons.ContainsKey(p.Id))
             {

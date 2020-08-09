@@ -42,7 +42,7 @@
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(120, 47);
             this.btnImport.TabIndex = 0;
-            this.btnImport.Text = "Import";
+            this.btnImport.Text = "Generate";
             this.btnImport.UseVisualStyleBackColor = true;
             this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
             // 
@@ -77,7 +77,6 @@
             // 
             this.txtAncestor.Location = new System.Drawing.Point(126, 57);
             this.txtAncestor.Name = "txtAncestor";
-            this.txtAncestor.ReadOnly = true;
             this.txtAncestor.Size = new System.Drawing.Size(112, 20);
             this.txtAncestor.TabIndex = 4;
             // 

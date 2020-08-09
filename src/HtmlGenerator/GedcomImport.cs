@@ -289,16 +289,29 @@ namespace HtmlGenerator
         private static DateTime? GetValueDate(XmlNode node, string xpath)
         {
             DateTime? result = null;
+            string value = GetValue(node, xpath);
 
             try
             {
-                string value = GetValue(node, xpath);
+                
                 if (!string.IsNullOrEmpty(value))
+                {
                     result = DateTime.Parse(value, CultureInfo.InvariantCulture);
+                }
             }
-            catch
+            catch (Exception ex)
             {
-                // The date is invalid, ignore and continue processing.
+                try
+                {
+                    // in case date is only the year
+                    int year = Convert.ToInt32(value);
+                    result = new DateTime(year, 1, 1);
+                }
+                catch
+                {
+
+                    // The date is invalid, ignore and continue processing.
+                }
             }
 
             return result;
