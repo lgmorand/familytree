@@ -8,7 +8,7 @@ jobs:
     runs-on: windows-latest 
 
     env:
-      Solution_Name: "src/FamilyTree.sln"                        # Replace with your solution name, i.e. MyWpfApp.sln.
+      Solution_Name: "FamilyTree.sln"                        # Replace with your solution name, i.e. MyWpfApp.sln.
 
     steps:
     - name: Checkout
@@ -27,6 +27,7 @@ jobs:
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
       run: msbuild $env:Solution_Name /t:Restore 
+      working-directory: ./src
 
 
     # Create the app package by building and packaging the Windows Application Packaging project
