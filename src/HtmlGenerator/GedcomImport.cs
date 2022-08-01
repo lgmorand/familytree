@@ -293,7 +293,6 @@ namespace HtmlGenerator
 
             try
             {
-                
                 if (!string.IsNullOrEmpty(value))
                 {
                     result = DateTime.Parse(value, CultureInfo.InvariantCulture);
@@ -309,7 +308,6 @@ namespace HtmlGenerator
                 }
                 catch
                 {
-
                     // The date is invalid, ignore and continue processing.
                 }
             }

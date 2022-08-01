@@ -28,12 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnImport = new System.Windows.Forms.Button();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.txtPath = new System.Windows.Forms.TextBox();
             this.txtAncestor = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // btnImport
@@ -79,6 +81,7 @@
             this.txtAncestor.Name = "txtAncestor";
             this.txtAncestor.Size = new System.Drawing.Size(112, 20);
             this.txtAncestor.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.txtAncestor, "Par exemple \"I157\"");
             // 
             // label2
             // 
@@ -117,6 +120,7 @@
         private System.Windows.Forms.TextBox txtPath;
         private System.Windows.Forms.TextBox txtAncestor;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ToolTip toolTip1;
     }
 }
 

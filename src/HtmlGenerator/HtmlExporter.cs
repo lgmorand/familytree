@@ -13,8 +13,8 @@ namespace HtmlGenerator
             var firstAncestor = GetPerson(ppl, ancestorId);
             StreamWriter strW = new StreamWriter(path);
             strW.Write("<html><meta charset='UTF-8'> ");
-			strW.Write("<script type='text/javascript' src='https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.min.js'></script>'");
-			strW.Write(@"<style type='text/css'>
+            strW.Write("<script type='text/javascript' src='https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.min.js'></script>'");
+            strW.Write(@"<style type='text/css'>
 .tree * {margin: 0; padding: 0;}
 
 .tree{
@@ -199,7 +199,6 @@ box-shadow: 3px 6px 5px 0px rgba(186,186,186,1);
 .tree li a+.p1 a.m { background: #c8e4fb; color: #000; border: 1px solid #94a0b4; }
 .tree li a+.p1 a.f { background: #ffc0cb; color: #000; border: 1px solid #94a0b4; }
 
-
 .tree .tree-thumbnail
 {
 	display:block;
@@ -249,17 +248,15 @@ box-shadow: 3px 6px 5px 0px rgba(186,186,186,1);
 	-moz-transition: all 0.5s;
 }
 
-
 /* cg: make sure the popovers are higher than the hovers */
 .popover { z-index: 4444; }
-
 
 </style>");
             strW.Write("<div class='tree'><ul>");
             ExportUser(firstAncestor, strW);
             strW.Write("</ul></div>");
-			strW.Write(@"<script type='text/javascript'>$(document).ready(function(){ document.getElementById('"+ ancestorId+"').scrollIntoView({ inline: 'center' });});</script>");
-			strW.Write("</html>");
+            strW.Write(@"<script type='text/javascript'>$(document).ready(function(){ document.getElementById('" + ancestorId + "').scrollIntoView({ inline: 'center' });});</script>");
+            strW.Write("</html>");
             strW.Flush();
             strW.Close();
         }

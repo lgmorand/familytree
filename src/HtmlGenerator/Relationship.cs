@@ -77,7 +77,8 @@ namespace HtmlGenerator
         }
 
         // Paramaterless constructor required for XML serialization
-        public ParentRelationship() { }
+        public ParentRelationship()
+        { }
 
         public ParentRelationship(Person personId, ParentChildModifier parentChildType)
         {
@@ -108,7 +109,8 @@ namespace HtmlGenerator
         }
 
         // Paramaterless constructor required for XML serialization
-        public ChildRelationship() { }
+        public ChildRelationship()
+        { }
 
         public ChildRelationship(Person person, ParentChildModifier parentChildType)
         {
@@ -147,7 +149,8 @@ namespace HtmlGenerator
         }
 
         // Paramaterless constructor required for XML serialization
-        public SpouseRelationship() { }
+        public SpouseRelationship()
+        { }
 
         public SpouseRelationship(Person person, SpouseModifier spouseType)
         {
@@ -164,7 +167,8 @@ namespace HtmlGenerator
     public class SiblingRelationship : Relationship
     {
         // Paramaterless constructor required for XML serialization
-        public SiblingRelationship() { }
+        public SiblingRelationship()
+        { }
 
         public SiblingRelationship(Person person)
         {
@@ -181,7 +185,8 @@ namespace HtmlGenerator
     /// Collection of relationship for a person object
     /// </summary>
     [Serializable]
-    public class RelationshipCollection : ObservableCollection<Relationship> { }
+    public class RelationshipCollection : ObservableCollection<Relationship>
+    { }
 
     #endregion Relationships collection
 

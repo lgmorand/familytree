@@ -1185,7 +1185,8 @@ namespace HtmlGenerator
         }
 
         // Parameterless contstructor required for serialization
-        public ParentSet() { }
+        public ParentSet()
+        { }
 
         #region IEquatable<ParentSet> Members
 
@@ -1212,5 +1213,6 @@ namespace HtmlGenerator
     /// <summary>
     /// Collection of ParentSet objects.
     /// </summary>
-    public class ParentSetCollection : Collection<ParentSet> { }
+    public class ParentSetCollection : Collection<ParentSet>
+    { }
 }
