@@ -38,30 +38,10 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
-            // btnImport
-            // 
-            this.btnImport.Location = new System.Drawing.Point(62, 95);
-            this.btnImport.Name = "btnImport";
-            this.btnImport.Size = new System.Drawing.Size(120, 47);
-            this.btnImport.TabIndex = 0;
-            this.btnImport.Text = "Generate";
-            this.btnImport.UseVisualStyleBackColor = true;
-            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
-            // 
-            // btnBrowse
-            // 
-            this.btnBrowse.Location = new System.Drawing.Point(244, 28);
-            this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(36, 23);
-            this.btnBrowse.TabIndex = 1;
-            this.btnBrowse.Text = "...";
-            this.btnBrowse.UseVisualStyleBackColor = true;
-            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 14);
+            this.label1.Location = new System.Drawing.Point(12, 14);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(114, 13);
             this.label1.TabIndex = 2;
@@ -69,44 +49,65 @@
             // 
             // txtPath
             // 
-            this.txtPath.Location = new System.Drawing.Point(9, 30);
+            this.txtPath.Location = new System.Drawing.Point(12, 30);
             this.txtPath.Name = "txtPath";
             this.txtPath.ReadOnly = true;
-            this.txtPath.Size = new System.Drawing.Size(229, 20);
+            this.txtPath.Size = new System.Drawing.Size(280, 20);
             this.txtPath.TabIndex = 3;
             // 
-            // txtAncestor
+            // btnBrowse
             // 
-            this.txtAncestor.Location = new System.Drawing.Point(126, 57);
-            this.txtAncestor.Name = "txtAncestor";
-            this.txtAncestor.Size = new System.Drawing.Size(112, 20);
-            this.txtAncestor.TabIndex = 4;
-            this.toolTip1.SetToolTip(this.txtAncestor, "Par exemple \"I157\"");
+            this.btnBrowse.Location = new System.Drawing.Point(300, 28);
+            this.btnBrowse.Name = "btnBrowse";
+            this.btnBrowse.Size = new System.Drawing.Size(78, 24);
+            this.btnBrowse.TabIndex = 1;
+            this.btnBrowse.Text = "Browse";
+            this.btnBrowse.UseVisualStyleBackColor = true;
+            this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 60);
+            this.label2.Location = new System.Drawing.Point(12, 60);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(111, 13);
             this.label2.TabIndex = 5;
             this.label2.Text = "ID of the first ancestor";
             // 
+            // txtAncestor
+            // 
+            this.txtAncestor.Location = new System.Drawing.Point(12, 76);
+            this.txtAncestor.Name = "txtAncestor";
+            this.txtAncestor.Size = new System.Drawing.Size(100, 20);
+            this.txtAncestor.TabIndex = 4;
+            this.toolTip1.SetToolTip(this.txtAncestor, "Par exemple \"I157\"");
+            // 
+            // btnImport
+            // 
+            this.btnImport.Location = new System.Drawing.Point(12, 112);
+            this.btnImport.Name = "btnImport";
+            this.btnImport.Size = new System.Drawing.Size(100, 35);
+            this.btnImport.TabIndex = 0;
+            this.btnImport.Text = "Generate";
+            this.btnImport.UseVisualStyleBackColor = true;
+            this.btnImport.Click += new System.EventHandler(this.btnImport_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 168);
-            this.Controls.Add(this.label2);
+            this.ClientSize = new System.Drawing.Size(390, 170);
+            this.Controls.Add(this.btnImport);
             this.Controls.Add(this.txtAncestor);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.txtPath);
             this.Controls.Add(this.label1);
-            this.Controls.Add(this.btnBrowse);
-            this.Controls.Add(this.btnImport);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MainForm";
-            this.Text = "Gedcom file converter";
+            this.Text = "Gedcom to HTML Tree Converter";
             this.ResumeLayout(false);
             this.PerformLayout();
 

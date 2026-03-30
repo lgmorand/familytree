@@ -1,24 +1,117 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security;
 
 namespace HtmlGenerator
 {
     public class HtmlExporter
     {
-        public Dictionary<string, Person> persons = new Dictionary<string, Person>();
+		private readonly Dictionary<string, Person> persons = new Dictionary<string, Person>();
 
         public void Export(string path, PeopleCollection ppl, string ancestorId)
         {
+			if (string.IsNullOrWhiteSpace(path) || ppl == null || ppl.Count == 0)
+			{
+				return;
+			}
+
+			persons.Clear();
+
             var firstAncestor = GetPerson(ppl, ancestorId);
-            StreamWriter strW = new StreamWriter(path);
-            strW.Write("<html><meta charset='UTF-8'> ");
-            strW.Write("<script type='text/javascript' src='https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.min.js'></script>'");
-            strW.Write(@"<style type='text/css'>
-.tree * {margin: 0; padding: 0;}
+			if (firstAncestor == null)
+			{
+				firstAncestor = ppl[0];
+			}
+
+			using (StreamWriter strW = new StreamWriter(path))
+			{
+				strW.Write("<html><meta charset='UTF-8'> ");
+				strW.Write("<script type='text/javascript' src='https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.5.0.min.js'></script>");
+				strW.Write(@"<style type='text/css'>
+:root {
+	--bg-top: #f6f8fc;
+	--bg-bottom: #eef3f8;
+	--line-color: #8ea6bf;
+	--text-main: #1c2733;
+	--text-soft: #5a6a7c;
+	--card-bg: #ffffff;
+	--card-border: #d5deea;
+	--card-shadow: 0 8px 20px rgba(40, 63, 92, 0.12);
+	--male-bg: #deedff;
+	--male-border: #9cb6d6;
+	--female-bg: #ffe3ea;
+	--female-border: #cda6b3;
+}
+
+html, body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	min-height: 100vh;
+	font-family: 'Nunito Sans', 'Segoe UI', Tahoma, sans-serif;
+	color: var(--text-main);
+	background:
+		radial-gradient(circle at 10% -10%, rgba(176, 205, 255, 0.35), transparent 30%),
+		radial-gradient(circle at 95% 15%, rgba(255, 205, 220, 0.3), transparent 32%),
+		linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+	background-repeat: no-repeat;
+	background-size: 100% 100%, 100% 100%, 100% 100%;
+	background-attachment: fixed;
+}
+
+.tree * {margin: 0; padding: 0; box-sizing: border-box;}
+
+.print-toolbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	width: 100vw;
+	z-index: 10;
+	display: block;
+	padding: 10px 0;
+	border-bottom: 1px solid #d8e0eb;
+	background: rgba(255, 255, 255, 0.86);
+	backdrop-filter: blur(6px);
+}
+
+.print-toolbar-inner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 14px;
+	width: 100%;
+	text-align: center;
+	padding: 0 14px;
+}
+
+.print-title {
+	font-size: 14px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	color: #2b3e53;
+}
+
+.print-btn {
+	border: 1px solid #8aa4c2;
+	background: linear-gradient(180deg, #ffffff, #edf4fc);
+	color: #1f3248;
+	font-size: 13px;
+	font-weight: 700;
+	padding: 7px 12px;
+	border-radius: 999px;
+	cursor: pointer;
+	box-shadow: 0 4px 10px rgba(31, 50, 72, 0.12);
+}
+
+.print-btn:hover {
+	filter: brightness(0.98);
+}
 
 .tree{
 	white-space:nowrap;
+	padding: 74px 16px 32px 16px;
 }
 
 .tree ul
@@ -39,7 +132,7 @@ namespace HtmlGenerator
 	text-align: center;
 	list-style-type: none;
 	position: relative;
-	padding: 20px 5px 0 5px;
+	padding: 24px 8px 0 8px;
 	font-size: 12px;
 	line-height: normal;
 
@@ -53,12 +146,12 @@ namespace HtmlGenerator
 .tree li::before, .tree li::after{
 	content: '';
 	position: absolute; top: 0; right: 50%;
-	border-top: 1px solid #2980B9;
+	border-top: 1px solid var(--line-color);
 	width: 50%; height: 20px;
 }
 .tree li::after{
 	right: auto; left: 50%;
-	border-left: 1px solid #2980B9;
+	border-left: 1px solid var(--line-color);
 }
 
 /*We need to remove left-right connectors from elements without
@@ -77,7 +170,7 @@ right connector from last child*/
 }
 /*Adding back the vertical connector to the last nodes*/
 .tree li li:last-child::before{
-	border-right: 1px solid #2980B9;
+	border-right: 1px solid var(--line-color);
 	border-radius: 0 5px 0 0;
 	-webkit-border-radius: 0 5px 0 0;
 	-moz-border-radius: 0 5px 0 0;
@@ -91,7 +184,7 @@ right connector from last child*/
 .tree li li:only-child::before
 {
 	right: auto; left: 50%;
-	border-left: 1px solid #2980B9;
+	border-left: 1px solid var(--line-color);
 	border-right:none;
 }
 
@@ -142,22 +235,23 @@ right connector from last child*/
 .tree ul ul.c::before{
 	content: '';
 	position: absolute; top: 0; left: 50%;
-	border-left: 1px solid #2980B9;
+	border-left: 1px solid var(--line-color);
 	width: 0; height: 20px;
 }
 
 .tree li a{
-	border: 1px solid #ccc;
-	padding: 4px;
+	border: 1px solid var(--card-border);
+	padding: 6px 8px;
 	text-decoration: none;
-	color: #666;
-	background-color:#fff;
+	color: var(--text-main);
+	background: linear-gradient(180deg, #ffffff, #f9fbfe);
 	display: inline-block;
-	min-width:50px;
+	min-width:90px;
+	max-width: 220px;
 
-	border-radius: 5px;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
+	border-radius: 12px;
+	-webkit-border-radius: 12px;
+	-moz-border-radius: 12px;
 
 	transition: all 0.5s;
 	-webkit-transition: all 0.5s;
@@ -167,9 +261,9 @@ right connector from last child*/
   /* cg - remove focus rectangle */
   outline:none;
 
-box-shadow: 3px 6px 5px 0px rgba(186,186,186,1);
-   -webkit-box-shadow: 3px 6px 5px 0px rgba(186,186,186,1);
-   -moz-box-shadow: 3px 6px 5px 0px rgba(186,186,186,1);
+	-webkit-box-shadow: var(--card-shadow);
+	-moz-box-shadow: var(--card-shadow);
+	box-shadow: var(--card-shadow);
 }
 
 .tree li a#hilight{
@@ -185,37 +279,64 @@ box-shadow: 3px 6px 5px 0px rgba(186,186,186,1);
 
 .tree li a span{
 	display:block;
-	font-size: 10px;
+	margin-top: 2px;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+	color: var(--text-soft);
 	}
 
 /*Time for some hover effects*/
 /*We will apply the hover effect the the lineage of the element also*/
-.tree li a.m { background: #c8e4f8; color: #000; border: 1px solid #94a0b4; }
-.tree li a.f { background: #ffc0cb; color: #000; border: 1px solid #94a0b4; }
 
-.tree li a+ul li a.m { background: #c8e4fb; color: #000; border: 1px solid #94a0b4; }
-.tree li a+ul li a.f { background: #ffc0cb; color: #000; border: 1px solid #94a0b4; }
+.tree li a:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 12px 24px rgba(40, 63, 92, 0.2);
+}
 
-.tree li a+.p1 a.m { background: #c8e4fb; color: #000; border: 1px solid #94a0b4; }
-.tree li a+.p1 a.f { background: #ffc0cb; color: #000; border: 1px solid #94a0b4; }
+.tree li a.m { background: linear-gradient(180deg, #f4f9ff, var(--male-bg)); color: #102136; border: 1px solid var(--male-border); }
+.tree li a.f { background: linear-gradient(180deg, #fff7f9, var(--female-bg)); color: #321723; border: 1px solid var(--female-border); }
+
+.tree li a+ul li a.m { background: linear-gradient(180deg, #f4f9ff, var(--male-bg)); color: #102136; border: 1px solid var(--male-border); }
+.tree li a+ul li a.f { background: linear-gradient(180deg, #fff7f9, var(--female-bg)); color: #321723; border: 1px solid var(--female-border); }
+
+.tree li a+.p1 a.m { background: linear-gradient(180deg, #f4f9ff, var(--male-bg)); color: #102136; border: 1px solid var(--male-border); }
+.tree li a+.p1 a.f { background: linear-gradient(180deg, #fff7f9, var(--female-bg)); color: #321723; border: 1px solid var(--female-border); }
 
 .tree .tree-thumbnail
 {
-	display:block;
+	display:flex;
+	align-items:center;
+	justify-content:center;
 	vertical-align:text-top;
 	margin:0px auto 4px auto;
-	width:50px;
-	height:50px;
+	width:38px;
+	height:38px;
+	border-radius: 999px;
+	font-size: 14px;
+	font-weight: 800;
+	color: #22364d;
+	border: 1px solid rgba(34, 54, 77, 0.25);
 }
 
 .tree a.f .tree-thumbnail
 {
-	background-image:url('./images/f.gif');
+	background: linear-gradient(180deg, #ffe9ef, #ffd7e3);
 }
 
 .tree a.m .tree-thumbnail
 {
-	background-image:url('./images/m.gif');
+	background: linear-gradient(180deg, #e8f3ff, #d7e9ff);
+}
+
+.tree a.f .tree-thumbnail::before
+{
+	content: 'F';
+}
+
+.tree a.m .tree-thumbnail::before
+{
+	content: 'M';
 }
 
 .tree-detail
@@ -251,14 +372,66 @@ box-shadow: 3px 6px 5px 0px rgba(186,186,186,1);
 /* cg: make sure the popovers are higher than the hovers */
 .popover { z-index: 4444; }
 
+@page {
+	size: A4 landscape;
+	margin: 10mm;
+}
+
+@media print {
+	html, body {
+		background: #ffffff !important;
+		color: #000000;
+		-webkit-print-color-adjust: exact;
+		print-color-adjust: exact;
+	}
+
+	.no-print {
+		display: none !important;
+	}
+
+	.tree {
+		padding: 0;
+	}
+
+	.tree ul {
+		transition: none !important;
+	}
+
+	.tree li,
+	.tree li a,
+	.tree ul,
+	.tree .p1 {
+		break-inside: avoid;
+		page-break-inside: avoid;
+	}
+
+	.tree li a {
+		box-shadow: none !important;
+		text-shadow: none !important;
+		transform: none !important;
+	}
+}
+
 </style>");
-            strW.Write("<div class='tree'><ul>");
-            ExportUser(firstAncestor, strW);
-            strW.Write("</ul></div>");
-            strW.Write(@"<script type='text/javascript'>$(document).ready(function(){ document.getElementById('" + ancestorId + "').scrollIntoView({ inline: 'center' });});</script>");
-            strW.Write("</html>");
-            strW.Flush();
-            strW.Close();
+				strW.Write("<div class='print-toolbar no-print'><div class='print-toolbar-inner'><div class='print-title'>Arbre familial</div><button type='button' class='print-btn' onclick='printA4()'>Imprimer en PDF A4</button></div></div>");
+				strW.Write("<div class='tree'><ul>");
+				ExportUser(firstAncestor, strW);
+				strW.Write("</ul></div>");
+				strW.Write(@"<script type='text/javascript'>
+function printA4() {
+	window.print();
+}
+
+$(document).ready(function(){
+	var selected = document.getElementById('" + EscapeForJsString(firstAncestor.Id) + @"');
+	if (selected) {
+		selected.scrollIntoView({ inline: 'center', block: 'center' });
+	}
+});
+</script>");
+				strW.Write("</html>");
+				strW.Flush();
+			}
         }
 
         private string GetCleanYear(string yearOfBirth, string yearOfDeath)
@@ -273,14 +446,14 @@ box-shadow: 3px 6px 5px 0px rgba(186,186,186,1);
 
         private void ExportUser(Person p, StreamWriter strW)
         {
-            strW.Write(string.Format("<li><a class='{0}' id='{3}'><div class='tree-thumbnail'></div><div class='tree-detail'>{1}<span>{2}</span></div></a>", p.Gender == Gender.Female ? "f" : "m", p.Name, GetCleanYear(p.YearOfBirth, p.YearOfDeath), p.Id));
+			strW.Write(string.Format("<li><a class='{0}' id='{3}'><div class='tree-thumbnail'></div><div class='tree-detail'>{1}<span>{2}</span></div></a>", p.Gender == Gender.Female ? "f" : "m", HtmlEncode(p.Name), HtmlEncode(GetCleanYear(p.YearOfBirth, p.YearOfDeath)), HtmlEncode(p.Id)));
 
             if (!persons.ContainsKey(p.Id))
             {
                 if (p.Spouses.Any())
                 {
                     Person spouse = p.Spouses.First();
-                    strW.Write(string.Format("<div class='p1'><a class='{0}'><div class='tree-thumbnail'></div><div class='tree-detail'>{1}<span>{2}</span></div></a>", spouse.Gender == Gender.Female ? "f" : "m", spouse.Name, GetCleanYear(spouse.YearOfBirth, spouse.YearOfDeath)));
+					strW.Write(string.Format("<div class='p1'><a class='{0}'><div class='tree-thumbnail'></div><div class='tree-detail'>{1}<span>{2}</span></div></a>", spouse.Gender == Gender.Female ? "f" : "m", HtmlEncode(spouse.Name), HtmlEncode(GetCleanYear(spouse.YearOfBirth, spouse.YearOfDeath))));
                 }
 
                 if (p.Children.Any())
@@ -308,5 +481,20 @@ box-shadow: 3px 6px 5px 0px rgba(186,186,186,1);
             }
             return null;
         }
+
+		private static string HtmlEncode(string value)
+		{
+			return SecurityElement.Escape(value) ?? string.Empty;
+		}
+
+		private static string EscapeForJsString(string value)
+		{
+			if (string.IsNullOrEmpty(value))
+			{
+				return string.Empty;
+			}
+
+			return value.Replace("\\", "\\\\").Replace("'", "\\'");
+		}
     }
 }

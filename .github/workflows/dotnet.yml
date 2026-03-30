@@ -1,18 +1,37 @@
-name: .NET
+name: Build and Release
 
 on:
-  workflow_dispatch
+  push:
+    branches:
+      - master
+  workflow_dispatch:
 
 jobs:
   build:
 
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
+
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v3
+
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v3
+
     - name: Restore dependencies
-      run: dotnet restore
+      run: nuget restore FamilyTree.sln
       working-directory: ./src
-    - name: Build
-      run: dotnet build --no-restore
+
+    - name: Build Release
+      run: msbuild FamilyTree.sln /p:Configuration=Release /p:Platform="Any CPU" /m
       working-directory: ./src
+
+    - name: Upload release artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: HtmlGenerator-win-x64
+        path: |
+          src/HtmlGenerator/bin/Release/**
+        if-no-files-found: error

@@ -63,7 +63,8 @@ namespace HtmlGenerator
             finally
             {
                 // Delete the temp XML file.
-                File.Delete(xmlFilePath);
+                if (File.Exists(xmlFilePath))
+                    File.Delete(xmlFilePath);
             }
         }
 
@@ -116,7 +117,7 @@ namespace HtmlGenerator
                 Person husbandPerson = people.Find(husband);
                 Person wifePerson = people.Find(wife);
 
-                // Add any marriage / divoirce details.
+                // Add any marriage / divorce details.
                 ImportMarriage(husbandPerson, wifePerson, node);
 
                 // Import the children.
@@ -130,7 +131,7 @@ namespace HtmlGenerator
                     if (husbandPerson != null && childPerson != null)
                         RelationshipHelper.AddChild(people, husbandPerson, childPerson);
 
-                    if (husbandPerson == null && wifePerson != null & childPerson != null)
+                    if (husbandPerson == null && wifePerson != null && childPerson != null)
                         RelationshipHelper.AddChild(people, wifePerson, childPerson);
                 }
             }
