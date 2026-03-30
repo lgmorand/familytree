@@ -66,56 +66,9 @@ html, body {
 
 .tree * {margin: 0; padding: 0; box-sizing: border-box;}
 
-.print-toolbar {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	width: 100vw;
-	z-index: 10;
-	display: block;
-	padding: 10px 0;
-	border-bottom: 1px solid #d8e0eb;
-	background: rgba(255, 255, 255, 0.86);
-	backdrop-filter: blur(6px);
-}
-
-.print-toolbar-inner {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	gap: 14px;
-	width: 100%;
-	text-align: center;
-	padding: 0 14px;
-}
-
-.print-title {
-	font-size: 14px;
-	font-weight: 700;
-	letter-spacing: 0.02em;
-	color: #2b3e53;
-}
-
-.print-btn {
-	border: 1px solid #8aa4c2;
-	background: linear-gradient(180deg, #ffffff, #edf4fc);
-	color: #1f3248;
-	font-size: 13px;
-	font-weight: 700;
-	padding: 7px 12px;
-	border-radius: 999px;
-	cursor: pointer;
-	box-shadow: 0 4px 10px rgba(31, 50, 72, 0.12);
-}
-
-.print-btn:hover {
-	filter: brightness(0.98);
-}
-
 .tree{
 	white-space:nowrap;
-	padding: 74px 16px 72px 16px;
+	padding: 16px 16px 72px 16px;
 }
 
 .generated-footer {
@@ -142,17 +95,6 @@ html, body {
 
 .generated-footer a:hover {
 	text-decoration: underline;
-}
-
-.print-pages {
-	display: none;
-}
-
-.print-page {
-	position: relative;
-	overflow: hidden;
-	margin: 0 auto;
-	background: #ffffff;
 }
 
 .tree ul
@@ -413,156 +355,12 @@ right connector from last child*/
 /* cg: make sure the popovers are higher than the hovers */
 .popover { z-index: 4444; }
 
-@page {
-	size: A4 landscape;
-	margin: 10mm;
-}
-
-@media print {
-	html, body {
-		background: #ffffff !important;
-		color: #000000;
-		-webkit-print-color-adjust: exact;
-		print-color-adjust: exact;
-	}
-
-	.no-print {
-		display: none !important;
-	}
-
-	.tree {
-		padding: 0;
-	}
-
-	.tree ul {
-		transition: none !important;
-	}
-
-	.tree li,
-	.tree li a,
-	.tree ul,
-	.tree .p1 {
-		break-inside: avoid;
-		page-break-inside: avoid;
-	}
-
-	.tree li a {
-		box-shadow: none !important;
-		text-shadow: none !important;
-		transform: none !important;
-	}
-
-	.generated-footer {
-		position: static;
-		border-top: none;
-		background: transparent;
-		backdrop-filter: none;
-	}
-
-	body.print-sliced .tree {
-		display: none !important;
-	}
-
-	body.print-sliced .print-pages {
-		display: block;
-	}
-
-	.print-page {
-		width: 277mm;
-		height: 190mm;
-		break-after: page;
-		page-break-after: always;
-	}
-
-	.print-page:last-child {
-		break-after: auto;
-		page-break-after: auto;
-	}
-}
-
 </style>");
-				strW.Write("<div class='print-toolbar no-print'><div class='print-toolbar-inner'><div class='print-title'>Arbre familial</div><button type='button' class='print-btn' onclick='printA4()'>Imprimer en PDF A4</button></div></div>");
 				strW.Write("<div class='tree'><ul>");
 				ExportUser(firstAncestor, strW);
 				strW.Write("</ul></div>");
-				strW.Write("<div id='print-pages' class='print-pages'></div>");
 				strW.Write(string.Format("<footer class='generated-footer'>{0}</footer>", generatedFooter));
 				strW.Write(@"<script type='text/javascript'>
-function mmToPx(mm) {
-	return (mm * 96) / 25.4;
-}
-
-function buildPrintPages() {
-	var sourceTree = document.querySelector('.tree');
-	var printPages = document.getElementById('print-pages');
-	if (!sourceTree || !printPages) {
-		return;
-	}
-
-	printPages.innerHTML = '';
-
-	var measurementTree = sourceTree.cloneNode(true);
-	measurementTree.style.position = 'absolute';
-	measurementTree.style.visibility = 'hidden';
-	measurementTree.style.left = '-100000px';
-	measurementTree.style.top = '0';
-	measurementTree.style.padding = '0';
-	measurementTree.style.margin = '0';
-	document.body.appendChild(measurementTree);
-
-	var treeWidth = Math.ceil(measurementTree.scrollWidth);
-	var treeHeight = Math.ceil(measurementTree.scrollHeight);
-	document.body.removeChild(measurementTree);
-
-	if (treeWidth === 0 || treeHeight === 0) {
-		document.body.classList.remove('print-sliced');
-		return;
-	}
-
-	var pageWidth = Math.floor(mmToPx(277));
-	var pageHeight = Math.floor(mmToPx(190));
-
-	for (var y = 0; y < treeHeight; y += pageHeight) {
-		for (var x = 0; x < treeWidth; x += pageWidth) {
-			var page = document.createElement('div');
-			page.className = 'print-page';
-
-			var pageTree = sourceTree.cloneNode(true);
-			pageTree.style.position = 'absolute';
-			pageTree.style.left = (-x) + 'px';
-			pageTree.style.top = (-y) + 'px';
-			pageTree.style.padding = '0';
-			pageTree.style.margin = '0';
-
-			page.appendChild(pageTree);
-			printPages.appendChild(page);
-		}
-	}
-
-	document.body.classList.add('print-sliced');
-}
-
-function cleanupPrintPages() {
-	var printPages = document.getElementById('print-pages');
-	if (printPages) {
-		printPages.innerHTML = '';
-	}
-	document.body.classList.remove('print-sliced');
-}
-
-function printA4() {
-	buildPrintPages();
-	window.print();
-}
-
-window.addEventListener('beforeprint', function () {
-	buildPrintPages();
-});
-
-window.addEventListener('afterprint', function () {
-	cleanupPrintPages();
-});
-
 $(document).ready(function(){
 	var selected = document.getElementById('" + EscapeForJsString(firstAncestor.Id) + @"');
 	if (selected) {
